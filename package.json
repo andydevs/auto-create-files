@@ -1,0 +1,18 @@
+{
+  "name": "auto-create-files",
+  "main": "./lib/auto-create-files",
+  "version": "0.0.0",
+  "description": "Automatically creates project files",
+  "keywords": [],
+  "activationCommands": {
+    "atom-workspace": "auto-create-files:gitignore"
+  },
+  "repository": "https://github.com/andydevs/auto-create-files",
+  "license": "MIT",
+  "engines": {
+    "atom": ">=1.0.0 <2.0.0"
+  },
+  "dependencies": {
+    "atom-select-list": "^0.3.2"
+  }
+}
