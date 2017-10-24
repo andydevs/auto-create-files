@@ -27,6 +27,19 @@ githubApiGet = (path) ->
     config.path = path
     config
 
+# Pulls entire text from an https get
+#
+# @param url the url to get from
+#
+# @return entire text from https get
+httpsPullText = (url, callback) ->
+    https.get githubApiGet(url), (response) ->
+        data = ''
+        response.on 'data', (chunk) ->
+            data += chunk
+        response.on 'end', ->
+            callback(data)
+
 # Export class file
 module.exports = AutoCreateFiles =
     # Member variables
@@ -58,16 +71,12 @@ module.exports = AutoCreateFiles =
             visible: false
 
         # Get gitignore templates
-        https.get githubApiGet('/gitignore/templates'), (response) =>
-            data = ''
-            response.on 'data', (chunk) =>
-                data += chunk
-            response.on 'end', =>
-                items = JSON.parse(data)
-                console.log 'Available gitignore templates:'
-                console.log items
-                @selectorView.update
-                    items: items
+        httpsPullText '/gitignore/templates', (data) =>
+            items = JSON.parse(data)
+            console.log 'Available templates:'
+            console.log items
+            @selectorView.update
+                items: items
 
         # Get filepath
         @filepath = path.join atom.project.getPaths()[0], '.gitignore'
@@ -104,15 +113,11 @@ module.exports = AutoCreateFiles =
         console.log ('Creating '+type+'...')
 
         # Get file and write
-        https.get githubApiGet('/gitignore/templates/'+type), (response) =>
-            data = ''
-            response.on 'data', (chunk) =>
-                data += chunk
-            response.on 'end', =>
-                fs.writeFile @filepath, JSON.parse(data).source, (err) =>
-                    throw err if err?
-                    console.log (type+' .gitignore created!')
-                    atom.notifications.addSuccess (type+' .gitignore created!')
+        httpsPullText ('/gitignore/templates/'+type), (data) =>
+            fs.writeFile @filepath, JSON.parse(data).source, (err) =>
+                throw err if err?
+                console.log (type+' .gitignore created!')
+                atom.notifications.addSuccess (type+' .gitignore created!')
 
         # Close window
         @closeWindow()
