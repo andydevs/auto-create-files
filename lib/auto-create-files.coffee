@@ -44,7 +44,10 @@ httpsPullText = (url, callback) ->
 module.exports = AutoCreateFiles =
     # Member variables
     selectorView: null
+    filename: null
     filepath: null
+    listUrl: null
+    fileUrl: null
     panel: null
     subscriptions: null
 
@@ -57,30 +60,6 @@ module.exports = AutoCreateFiles =
         @subscriptions.add atom.commands.add 'atom-workspace',
             'auto-create-files:gitignore': => @gitignore()
 
-        # Create Select List View
-        @selectorView = new SelectListView
-            items: []
-            elementForItem: (item) => @itemView(item)
-            didCancelSelection: => @closeWindow()
-            didConfirmSelection: (type) => @create(type)
-        @selectorView.element.classList.add 'auto-create-files'
-
-        # Add view to modal panel
-        @panel = atom.workspace.addModalPanel
-            item: @selectorView.element
-            visible: false
-
-        # Get gitignore templates
-        httpsPullText '/gitignore/templates', (data) =>
-            items = JSON.parse(data)
-            console.log 'Available templates:'
-            console.log items
-            @selectorView.update
-                items: items
-
-        # Get filepath
-        @filepath = path.join atom.project.getPaths()[0], '.gitignore'
-
     # Returns empty serialization
     serialize: -> {}
 
@@ -92,8 +71,36 @@ module.exports = AutoCreateFiles =
 
     # Creates a new .gitignore file
     gitignore: ->
-        console.log 'Show gitignore creator window.'
-        @panel.show()
+        # Filetype and url params
+        @filename = '.gitignore'
+        @listUrl = '/gitignore/templates'
+        @fileUrl = (type) ->
+            '/gitignore/templates/'+type
+
+        # Create select list view
+        @selectorView = new SelectListView
+            items: []
+            elementForItem: (item) => @itemView(item)
+            didCancelSelection: => @closeWindow()
+            didConfirmSelection: (type) => @create(type)
+        @selectorView.element.classList.add 'auto-create-files'
+
+        # Get gitignore templates
+        httpsPullText @listUrl, (data) =>
+            items = JSON.parse(data)
+            console.log 'Available '+@filename+' templates:'
+            console.log items
+            @selectorView.update
+                items: items
+
+        # Get filepath
+        @filepath = path.join atom.project.getPaths()[0], @filename
+
+        # Create modal panel
+        console.log 'Show creator window.'
+        @panel = atom.workspace.addModalPanel
+            item: @selectorView.element
+            visible: true
         @selectorView.focus()
 
     # View for item
@@ -105,7 +112,8 @@ module.exports = AutoCreateFiles =
     # Closes the select list window
     closeWindow: ->
         console.log 'Closing modal panel...'
-        @panel.hide()
+        @panel.destroy()
+        @selectorView.destroy()
 
     # Creates a new file of the given type
     create: (type) ->
@@ -113,11 +121,11 @@ module.exports = AutoCreateFiles =
         console.log ('Creating '+type+'...')
 
         # Get file and write
-        httpsPullText ('/gitignore/templates/'+type), (data) =>
+        httpsPullText @fileUrl(type), (data) =>
             fs.writeFile @filepath, JSON.parse(data).source, (err) =>
                 throw err if err?
-                console.log (type+' .gitignore created!')
-                atom.notifications.addSuccess (type+' .gitignore created!')
+                console.log (type+' '+@filename+' created!')
+                atom.notifications.addSuccess (type+' '+@filename+' created!')
 
         # Close window
         @closeWindow()
