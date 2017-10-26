@@ -44,8 +44,7 @@ class TemplateSelector
     # Members
     closePanel: null
     filename: null
-    listUrl: null
-    fileUrl: null
+    apiUrl: null
     filepath: null
     responseMapper: null
     getSource: null
@@ -56,8 +55,7 @@ class TemplateSelector
         # Get props
         @closePanel = props.closePanel
         @filename = props.filename
-        @listUrl = props.listUrl
-        @fileUrl = props.fileUrl
+        @apiUrl = props.apiUrl
         @filepath = path.join atom.project.getPaths()[0], @filename
         @responseMapper = props.responseMapper
         @getSource = props.getSource
@@ -71,7 +69,7 @@ class TemplateSelector
         @selectorView.element.classList.add 'auto-create-files'
 
         # Get gitignore templates
-        httpsPullText @listUrl, (data) =>
+        httpsPullText @apiUrl, (data) =>
             console.log(data)
             items = JSON.parse(data).map @responseMapper
             console.log 'Available '+@filename+' templates:'
@@ -95,7 +93,7 @@ class TemplateSelector
         console.log ('Creating '+type+'...')
 
         # Get file and write
-        httpsPullText @fileUrl(type), (data) =>
+        httpsPullText (@apiUrl+'/'+type), (data) =>
             fs.writeFile @filepath, @getSource(JSON.parse data), (err) =>
                 throw err if err?
                 console.log (type+' '+@filename+' created!')
