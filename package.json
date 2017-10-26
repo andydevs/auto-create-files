@@ -1,13 +1,17 @@
 {
   "name": "auto-create-files",
   "main": "./lib/auto-create-files",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Automatically creates project files",
-  "keywords": ["gitignore", "license", "github"],
+  "keywords": [
+    "gitignore",
+    "license",
+    "github"
+  ],
   "activationCommands": {
     "atom-workspace": [
-        "auto-create-files:gitignore",
-        "auto-create-files:license"
+      "auto-create-files:gitignore",
+      "auto-create-files:license"
     ]
   },
   "repository": "https://github.com/andydevs/auto-create-files",
