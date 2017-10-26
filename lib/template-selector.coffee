@@ -13,7 +13,7 @@ path = require 'path'
 GITHUB_API_CONFIG =
     hostname: 'api.github.com'
     headers:
-        'Accept': 'application/vnd.github.v3+json'
+        'Accept': 'application/vnd.github.drax-preview+json'
         'User-Agent': 'Atom-Gitignores-Package'
 
 # Returns a github api config for the given path
@@ -47,6 +47,8 @@ class TemplateSelector
     listUrl: null
     fileUrl: null
     filepath: null
+    responseMapper: null
+    getSource: null
     selectorView: null
 
     # Creates a new TemplateSelectorView
@@ -57,6 +59,8 @@ class TemplateSelector
         @listUrl = props.listUrl
         @fileUrl = props.fileUrl
         @filepath = path.join atom.project.getPaths()[0], @filename
+        @responseMapper = props.responseMapper
+        @getSource = props.getSource
 
         # Create SelectListView
         @selectorView = new SelectListView
@@ -68,7 +72,8 @@ class TemplateSelector
 
         # Get gitignore templates
         httpsPullText @listUrl, (data) =>
-            items = JSON.parse(data)
+            console.log(data)
+            items = JSON.parse(data).map @responseMapper
             console.log 'Available '+@filename+' templates:'
             console.log items
             @selectorView.update
@@ -91,7 +96,7 @@ class TemplateSelector
 
         # Get file and write
         httpsPullText @fileUrl(type), (data) =>
-            fs.writeFile @filepath, JSON.parse(data).source, (err) =>
+            fs.writeFile @filepath, @getSource(JSON.parse data), (err) =>
                 throw err if err?
                 console.log (type+' '+@filename+' created!')
                 atom.notifications.addSuccess (type+' '+@filename+' created!')

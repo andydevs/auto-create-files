@@ -5,7 +5,10 @@
   "description": "Automatically creates project files",
   "keywords": [],
   "activationCommands": {
-    "atom-workspace": "auto-create-files:gitignore"
+    "atom-workspace": [
+        "auto-create-files:gitignore",
+        "auto-create-files:license"
+    ]
   },
   "repository": "https://github.com/andydevs/auto-create-files",
   "license": "MIT",
