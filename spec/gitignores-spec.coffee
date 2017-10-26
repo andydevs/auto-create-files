@@ -4,10 +4,9 @@
 #
 # Author:  Anshul Kharbanda
 # Created: 10 - 20 - 2017
-AutoCreateFiles = require '../lib/auto-create-files'
 
-# Describe AutoCreateFiles
-describe 'AutoCreateFiles', ->
+# Describe Gitignore
+describe 'Gitignore', ->
     # Variables
     activatedPromise = null
     workspaceView = null
