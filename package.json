@@ -11,7 +11,7 @@
     ]
   },
   "repository": "https://github.com/andydevs/auto-create-files",
-  "license": "MIT",
+  "license": "GPL-3.0",
   "engines": {
     "atom": ">=1.0.0 <2.0.0"
   },
