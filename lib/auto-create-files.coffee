@@ -40,15 +40,15 @@ module.exports = AutoCreateFiles =
             visible: true
         @templateSelector.selectorView.focus()
 
-    # Creates a new .gitignore file(?)
+    # Creates a new .gitignore file
     gitignore: ->
         # Create template selector
         @templateSelector = new TemplateSelector
-            closePanel: => @closeWindow()
             filename: '.gitignore'
             apiUrl: '/gitignore/templates'
             responseMapper: (item) -> item
             getSource: (data) -> data.source
+            closePanel: => @closeWindow()
 
         # Show template selector
         @showTemplateSelector()
@@ -57,11 +57,11 @@ module.exports = AutoCreateFiles =
     license: ->
         # Create template selector
         @templateSelector = new TemplateSelector
-            closePanel: => @closeWindow()
             filename: 'LICENSE'
             apiUrl: '/licenses'
             responseMapper: (item) -> item.spdx_id
             getSource: (data) -> data.body
+            closePanel: => @closeWindow()
 
         # Show template selector
         @showTemplateSelector()
