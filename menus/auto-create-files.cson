@@ -6,8 +6,12 @@
       'label': 'Auto Create Files'
       'submenu': [
         {
-          'label': 'Create .gitignore'
-          'command': 'auto-create-files:gitignore'
+            'label': 'Create .gitignore'
+            'command': 'auto-create-files:gitignore'
+        }
+        {
+            'label': 'Create LICENSE'
+            'command': 'auto-create-files:license'
         }
       ]
     ]
