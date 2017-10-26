@@ -3,7 +3,7 @@
   "main": "./lib/auto-create-files",
   "version": "0.0.0",
   "description": "Automatically creates project files",
-  "keywords": [],
+  "keywords": ["gitignore", "license", "github"],
   "activationCommands": {
     "atom-workspace": [
         "auto-create-files:gitignore",
