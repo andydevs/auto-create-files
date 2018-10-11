@@ -39,6 +39,18 @@ httpsPullText = (url, callback) ->
         response.on 'end', ->
             callback(data)
 
+# Parses placeholders in text if text is MIT license
+#
+# @param text text to parse
+#
+# @return parsed text
+parseMITLicense = (text) ->
+    return text.replace /\[(\w+)\]/, (match, word) ->
+        switch word
+            when 'year' then return (new Date()).getFullYear()
+            when 'fullname' then return atom.config.get('auto-create-files.fullname')
+            else return match
+
 # Selection of Templates
 class TemplateSelector
     # Members
@@ -94,7 +106,11 @@ class TemplateSelector
 
         # Get file and write
         httpsPullText (@apiUrl+'/'+type), (data) =>
-            fs.writeFile @filepath, @getSource(JSON.parse data), (err) =>
+            source = @getSource(JSON.parse data)
+            if type === 'MIT'
+                source = parseMITLicense source
+
+            fs.writeFile @filepath, source, (err) =>
                 throw err if err?
                 console.log (type+' '+@filename+' created!')
                 atom.notifications.addSuccess (type+' '+@filename+' created!')

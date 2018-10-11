@@ -9,6 +9,11 @@ TemplateSelector = require './template-selector'
 
 # Export class file
 module.exports = AutoCreateFiles =
+    # Configuration
+    config:
+        type: 'string'
+        default: '[fullname]'
+
     # Member variables
     subscriptions: null
     templateSelector: null
