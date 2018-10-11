@@ -11,8 +11,9 @@ TemplateSelector = require './template-selector'
 module.exports = AutoCreateFiles =
     # Configuration
     config:
-        type: 'string'
-        default: '[fullname]'
+        fullname:
+            type: 'string'
+            default: '[fullname]'
 
     # Member variables
     subscriptions: null

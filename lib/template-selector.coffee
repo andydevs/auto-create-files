@@ -107,7 +107,7 @@ class TemplateSelector
         # Get file and write
         httpsPullText (@apiUrl+'/'+type), (data) =>
             source = @getSource(JSON.parse data)
-            if type === 'MIT'
+            if type == 'MIT'
                 source = parseMITLicense source
 
             fs.writeFile @filepath, source, (err) =>
