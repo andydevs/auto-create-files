@@ -1,7 +1,7 @@
 {
   "name": "auto-create-files",
   "main": "./lib/auto-create-files",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Automatically creates project files",
   "keywords": [
     "gitignore",
