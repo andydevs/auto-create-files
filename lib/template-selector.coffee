@@ -68,7 +68,15 @@ class TemplateSelector
         @closePanel = props.closePanel
         @filename = props.filename
         @apiUrl = props.apiUrl
-        @filepath = path.join atom.project.getPaths()[0], @filename
+
+        if (atom.workspace.getActiveTextEditor()?)
+          @filepath = path.join atom.project.relativizePath(atom.workspace.getActiveTextEditor().getPath())[0], @filename
+        else
+          @filepath = path.join atom.project.getPaths()[0], @filename
+          atom.notifications.addWarning(
+            "No project open in editor view: creating in '" + @filepath + "'"
+          )
+
         @responseMapper = props.responseMapper
         @getSource = props.getSource
 
