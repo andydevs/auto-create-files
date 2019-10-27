@@ -69,13 +69,21 @@ class TemplateSelector
         @filename = props.filename
         @apiUrl = props.apiUrl
 
-        if (atom.workspace.getActiveTextEditor()?)
-          @filepath = path.join atom.project.relativizePath(atom.workspace.getActiveTextEditor().getPath())[0], @filename
-        else
-          @filepath = path.join atom.project.getPaths()[0], @filename
+        getRootDir = () ->
+          dirs = atom.project.getDirectories()
+          defaultPath = dirs[0]?.path # first directory in tree view
+          return defaultPath if dirs.length < 2
+          activeFilePath = document.querySelector('.tree-view .selected')?.getPath?() ||
+            atom.workspace.getActivePaneItem()?.buffer?.file?.path
+          if activeFilePath?
+            for dir in dirs
+              return dir.path if activeFilePath.indexOf(dir.path) is 0
           atom.notifications.addWarning(
-            "No project open in editor view: creating in '" + @filepath + "'"
+            "No project open in editor view: creating in '" + defaultPath + "'"
           )
+          defaultPath
+
+        @filepath = path.join getRootDir(), @filename
 
         @responseMapper = props.responseMapper
         @getSource = props.getSource
