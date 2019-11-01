@@ -2,6 +2,9 @@ name: CI
 
 on: [push]
 
+env:
+  TRAVIS_OS_NAME: linux
+
 jobs:
   build:
     runs-on: ubuntu-latest
