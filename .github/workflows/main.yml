@@ -1,0 +1,29 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+      # - ubuntu-latest
+      # - macOS-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+
+    - name: Install packages
+      run: apt install build-essential fakeroot git libsecret-1-dev
+
+    - name: Get package script
+      # uses: actions/checkout@v1
+      # with:
+      #   repository: myAccount/myRepository
+      #   ref: refs/heads/release
+      run: curl -s -O https://raw.githubusercontent.com/atom/ci/master/build-package.sh
+
+    - name: Set script permissions
+      run: chmod u+x build-package.sh
+
+    - name: Build package
+      run: ./build-package.sh
