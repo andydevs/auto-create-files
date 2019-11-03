@@ -2,27 +2,39 @@ name: CI
 
 on: [push]
 
-env:
-  TRAVIS_OS_NAME: linux
-
 jobs:
-  build:
-    runs-on: ubuntu-latest
-      # - ubuntu-latest
-      # - macOS-latest
+  build-linux:
+    runs-on:
+      - ubuntu-latest
+        
+    env:
+      TRAVIS_OS_NAME: linux
 
     steps:
     - name: Checkout
       uses: actions/checkout@master
 
-    - name: Install packages
-      run: sudo apt install build-essential fakeroot git libsecret-1-dev
+    - name: Get package script
+      run: curl -s -O https://raw.githubusercontent.com/atom/ci/master/build-package.sh
+
+    - name: Set script permissions
+      run: chmod u+x build-package.sh
+
+    - name: Build package
+      run: ./build-package.sh
+
+  build-macos:
+    runs-on:
+      - macOS-latest
+        
+    env:
+      TRAVIS_OS_NAME: osx
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
 
     - name: Get package script
-      # uses: actions/checkout@v1
-      # with:
-      #   repository: myAccount/myRepository
-      #   ref: refs/heads/release
       run: curl -s -O https://raw.githubusercontent.com/atom/ci/master/build-package.sh
 
     - name: Set script permissions
