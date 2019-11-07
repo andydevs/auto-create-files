@@ -34,7 +34,7 @@ jobs:
       run: ./build-package.sh
 
   build-macos-stable:
-    runs-on: macOS-latest
+    runs-on: macos-latest
     env:
       TRAVIS_OS_NAME: osx
       ATOM_CHANNEL: stable
@@ -49,7 +49,7 @@ jobs:
       run: ./build-package.sh
 
   build-macos-beta:
-    runs-on: macOS-latest
+    runs-on: macos-latest
     env:
       TRAVIS_OS_NAME: osx
       ATOM_CHANNEL: beta
