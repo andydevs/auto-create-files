@@ -62,31 +62,31 @@ class TemplateSelector
   getSource: null
   selectorView: null
 
-    # Creates a new TemplateSelectorView
-    constructor: (props) ->
-        # Get props
-        @closePanel = props.closePanel
-        @filename = props.filename
-        @apiUrl = props.apiUrl
+  # Creates a new TemplateSelectorView
+  constructor: (props) ->
+    # Get props
+    @closePanel = props.closePanel
+    @filename = props.filename
+    @apiUrl = props.apiUrl
 
-        getRootDir = () ->
-          dirs = atom.project.getDirectories()
-          defaultPath = dirs[0]?.path # first directory in tree view
-          return defaultPath if dirs.length < 2
-          activeFilePath = document.querySelector('.tree-view .selected')?.getPath?() ||
-            atom.workspace.getActivePaneItem()?.buffer?.file?.path
-          if activeFilePath?
-            for dir in dirs
-              return dir.path if activeFilePath.indexOf(dir.path) is 0
-          atom.notifications.addWarning(
-            "No project open in editor view: creating in '" + defaultPath + "'"
-          )
-          defaultPath
+    getRootDir = () ->
+      dirs = atom.project.getDirectories()
+      defaultPath = dirs[0]?.path # first directory in tree view
+      return defaultPath if dirs.length < 2
+      activeFilePath = document.querySelector('.tree-view .selected')?.getPath?() ||
+        atom.workspace.getActivePaneItem()?.buffer?.file?.path
+      if activeFilePath?
+        for dir in dirs
+          return dir.path if activeFilePath.indexOf(dir.path) is 0
+      atom.notifications.addWarning(
+        "No project open in editor view: creating in '" + defaultPath + "'"
+      )
+      defaultPath
 
-        @filepath = path.join getRootDir(), @filename
+    @filepath = path.join getRootDir(), @filename
 
-        @responseMapper = props.responseMapper
-        @getSource = props.getSource
+    @responseMapper = props.responseMapper
+    @getSource = props.getSource
 
     # Create SelectListView
     @selectorView = new SelectListView
