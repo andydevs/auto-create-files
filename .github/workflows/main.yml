@@ -1,0 +1,33 @@
+name: CI
+
+on: [push]
+
+env:
+  CI: true
+
+jobs:
+  Test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        channel: [stable, beta]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v1
+    - uses: UziTech/action-setup-atom@v1
+      with:
+        channel: ${{ matrix.channel }}
+    - name: Atom version
+      run: atom -v
+    - name: APM version
+      run: apm -v
+    - name: Install dependencies
+      run: apm i
+    - name: Run coffeelint
+      run: ./node_modules/.bin/coffeelint spec
+    - name: Run standard
+      run: ./node_modules/.bin/standard "spec/**/*.js"
+    # - name: Run eslint
+    #   run: ./node_modules/.bin/eslint "spec/**/*.js"
+    - name: Run tests
+      run: atom --test spec

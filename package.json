@@ -21,5 +21,10 @@
   },
   "dependencies": {
     "atom-select-list": "^0.3.2"
+  },
+  "devDependencies": {
+    "standard": "^14.3.1",
+    "eslint": "^6.6.0",
+    "coffeelint": "^2.1.0"
   }
 }

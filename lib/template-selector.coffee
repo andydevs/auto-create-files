@@ -11,10 +11,10 @@ path = require 'path'
 
 # Configuration for gitignore
 GITHUB_API_CONFIG =
-    hostname: 'api.github.com'
-    headers:
-        'Accept': 'application/vnd.github.drax-preview+json'
-        'User-Agent': 'Atom-Gitignores-Package'
+  hostname: 'api.github.com'
+  headers:
+    'Accept': 'application/vnd.github.drax-preview+json'
+    'User-Agent': 'Atom-Gitignores-Package'
 
 # Returns a github api config for the given path
 #
@@ -22,9 +22,9 @@ GITHUB_API_CONFIG =
 #
 # @return github api config
 githubApiGet = (path) ->
-    config = GITHUB_API_CONFIG
-    config.path = path
-    config
+  config = GITHUB_API_CONFIG
+  config.path = path
+  config
 
 # Pulls entire text from an https get
 #
@@ -32,12 +32,12 @@ githubApiGet = (path) ->
 #
 # @return entire text from https get
 httpsPullText = (url, callback) ->
-    https.get githubApiGet(url), (response) ->
-        data = ''
-        response.on 'data', (chunk) ->
-            data += chunk
-        response.on 'end', ->
-            callback(data)
+  https.get githubApiGet(url), (response) ->
+    data = ''
+    response.on 'data', (chunk) ->
+      data += chunk
+    response.on 'end', ->
+      callback(data)
 
 # Parses placeholders in text if text is MIT license
 #
@@ -45,94 +45,94 @@ httpsPullText = (url, callback) ->
 #
 # @return parsed text
 parseMITLicense = (text) ->
-    return text.replace /\[(\w+)\]/, (match, word) ->
-        switch word
-            when 'year' then return (new Date()).getFullYear()
-            when 'fullname' then return atom.config.get('auto-create-files.fullname')
-            else return match
+  return text.replace /\[(\w+)\]/, (match, word) ->
+    switch word
+      when 'year' then return (new Date()).getFullYear()
+      when 'fullname' then return atom.config.get('auto-create-files.fullname')
+      else return match
 
 # Selection of Templates
 class TemplateSelector
-    # Members
-    closePanel: null
-    filename: null
-    apiUrl: null
-    filepath: null
-    responseMapper: null
-    getSource: null
-    selectorView: null
+  # Members
+  closePanel: null
+  filename: null
+  apiUrl: null
+  filepath: null
+  responseMapper: null
+  getSource: null
+  selectorView: null
 
-    # Creates a new TemplateSelectorView
-    constructor: (props) ->
-        # Get props
-        @closePanel = props.closePanel
-        @filename = props.filename
-        @apiUrl = props.apiUrl
+  # Creates a new TemplateSelectorView
+  constructor: (props) ->
+    # Get props
+    @closePanel = props.closePanel
+    @filename = props.filename
+    @apiUrl = props.apiUrl
 
-        getRootDir = () ->
-          dirs = atom.project.getDirectories()
-          defaultPath = dirs[0]?.path # first directory in tree view
-          return defaultPath if dirs.length < 2
-          activeFilePath = document.querySelector('.tree-view .selected')?.getPath?() ||
-            atom.workspace.getActivePaneItem()?.buffer?.file?.path
-          if activeFilePath?
-            for dir in dirs
-              return dir.path if activeFilePath.indexOf(dir.path) is 0
-          atom.notifications.addWarning(
-            "No project open in editor view: creating in '" + defaultPath + "'"
-          )
-          defaultPath
+    getRootDir = () ->
+      dirs = atom.project.getDirectories()
+      defaultPath = dirs[0]?.path # first directory in tree view
+      return defaultPath if dirs.length < 2
+      activeFilePath = document.querySelector('.tree-view .selected')?.getPath?() ||
+        atom.workspace.getActivePaneItem()?.buffer?.file?.path
+      if activeFilePath?
+        for dir in dirs
+          return dir.path if activeFilePath.indexOf(dir.path) is 0
+      atom.notifications.addWarning(
+        "No project open in editor view: creating in '" + defaultPath + "'"
+      )
+      defaultPath
 
-        @filepath = path.join getRootDir(), @filename
+    @filepath = path.join getRootDir(), @filename
 
-        @responseMapper = props.responseMapper
-        @getSource = props.getSource
+    @responseMapper = props.responseMapper
+    @getSource = props.getSource
 
-        # Create SelectListView
-        @selectorView = new SelectListView
-            items: []
-            elementForItem: (item) => @itemView(item)
-            didCancelSelection: => @closePanel()
-            didConfirmSelection: (type) => @create(type)
-        @selectorView.element.classList.add 'auto-create-files'
+    # Create SelectListView
+    @selectorView = new SelectListView
+      items: []
+      elementForItem: (item) => @itemView(item)
+      didCancelSelection: => @closePanel()
+      didConfirmSelection: (type) => @create(type)
+    @selectorView.element.classList.add 'auto-create-files'
 
-        # Get gitignore templates
-        httpsPullText @apiUrl, (data) =>
-            console.log(data)
-            items = JSON.parse(data).map @responseMapper
-            console.log 'Available '+@filename+' templates:'
-            console.log items
-            @selectorView.update
-                items: items
+    # Get gitignore templates
+    httpsPullText @apiUrl, (data) =>
+      console.log(data)
+      items = JSON.parse(data).map @responseMapper
+      console.log 'Available '+@filename+' templates:'
+      console.log items
+      @selectorView.update
+        items: items
 
-    # Destroy TemplateSelector
-    destroy: ->
-        @selectorView.destroy()
+  # Destroy TemplateSelector
+  destroy: ->
+    @selectorView.destroy()
 
-    # View for item
-    itemView: (item) ->
-        elem = document.createElement 'li'
-        elem.textContent = item
-        elem
+  # View for item
+  itemView: (item) ->
+    elem = document.createElement 'li'
+    elem.textContent = item
+    elem
 
-    # Creates a new file of the given type
-    create: (type) ->
-        # Print message
-        console.log ('Creating '+type+'...')
+  # Creates a new file of the given type
+  create: (type) ->
+    # Print message
+    console.log ('Creating '+type+'...')
 
-        # Get file and write
-        httpsPullText (@apiUrl+'/'+type), (data) =>
-            source = @getSource(JSON.parse data)
-            if type == 'MIT'
-                source = parseMITLicense source
+    # Get file and write
+    httpsPullText (@apiUrl+'/'+type), (data) =>
+      source = @getSource(JSON.parse data)
+      if type == 'MIT'
+        source = parseMITLicense source
 
-            fs.writeFile @filepath, source, (err) =>
-                throw err if err?
-                console.log (type+' '+@filename+' created!')
-                atom.notifications.addSuccess (type+' '+@filename+' created!')
+      fs.writeFile @filepath, source, (err) =>
+        throw err if err?
+        console.log (type+' '+@filename+' created!')
+        atom.notifications.addSuccess (type+' '+@filename+' created!')
 
-        # Close panel
-        @closePanel()
+    # Close panel
+    @closePanel()
 
 # Export class
 module.exports = TemplateSelector
